@@ -5,9 +5,12 @@ import (
 	"log"
 	"net"
 
-	"github.com/tanayvaswani/grpcalc/pb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/status"
+
+	"github.com/tanayvaswani/grpcalc/pb"
 )
 
 type server struct {
@@ -20,6 +23,22 @@ func (s *server) Add(
 ) (*pb.CalculationResponse, error) {
 	return &pb.CalculationResponse{
 		Result: in.A + in.B,
+	}, nil
+}
+
+func (s *server) Divide(
+	ctx context.Context,
+	in *pb.CalculationRequest,
+) (*pb.CalculationResponse, error) {
+	if in.B == 0 {
+		return nil, status.Error(
+			codes.InvalidArgument,
+			"Cannot divide by zero",
+		)
+	}
+
+	return &pb.CalculationResponse{
+		Result: in.A / in.B,
 	}, nil
 }
 
