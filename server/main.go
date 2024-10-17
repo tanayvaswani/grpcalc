@@ -42,6 +42,21 @@ func (s *server) Divide(
 	}, nil
 }
 
+func (s *server) Sum(
+	ctx context.Context,
+	in *pb.NumbersRequest,
+) (*pb.CalculationResponse, error) {
+	var sum int64
+
+	for _, num := range in.Numbers {
+		sum += num
+	}
+
+	return &pb.CalculationResponse{
+		Result: sum,
+	}, nil
+}
+
 func main() {
 	listner, err := net.Listen("tcp", ":8080")
 	if err != nil {
